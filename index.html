@@ -320,7 +320,7 @@ async function submitForm() {
 
   } catch(e) {
     spinner.style.display = 'none';
-    errorMsg.style.display = 'block';
+    errorMsg.innerHTML = '❌ エラー: ' + e.message; errorMsg.style.display = 'block';
     btn.disabled = false;
   }
 }
