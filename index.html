@@ -6,334 +6,145 @@
 <title>eBay仕入れ入力</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #f0f2f5;
-  min-height: 100vh;
-  padding: 20px 16px;
-}
-h1 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 20px;
-  text-align: center;
-}
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  margin-bottom: 16px;
-}
-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #666;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-input, select {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #e8e8e8;
-  border-radius: 12px;
-  font-size: 16px;
-  color: #1a1a2e;
-  background: #fafafa;
-  transition: border-color 0.2s;
-  -webkit-appearance: none;
-}
-input:focus, select:focus {
-  outline: none;
-  border-color: #4f46e5;
-  background: white;
-}
-.site-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 8px;
-}
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px 16px; }
+h1 { font-size: 18px; font-weight: 700; color: #1a1a2e; margin-bottom: 20px; text-align: center; }
+.card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 16px; }
+label { display: block; font-size: 13px; font-weight: 600; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+input { width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 16px; color: #1a1a2e; background: #fafafa; -webkit-appearance: none; }
+input:focus { outline: none; border-color: #4f46e5; background: white; }
+.site-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
 .site-mercari { background: #fff0f0; color: #e74c3c; }
 .site-yahoo { background: #fff8e1; color: #f39c12; }
 .site-rakuma { background: #f0f4ff; color: #4f46e5; }
 .site-trefac { background: #f0fff4; color: #27ae60; }
 .site-other { background: #f5f5f5; color: #666; }
-.price-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.price-display {
-  background: #f8f9ff;
-  border: 2px solid #e8e8e8;
-  border-radius: 12px;
-  padding: 14px 16px;
-}
-.price-display .value {
-  font-size: 20px;
-  font-weight: 700;
-  color: #4f46e5;
-}
-.price-display .unit {
-  font-size: 12px;
-  color: #999;
-  margin-top: 2px;
-}
-.assignee-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #f8f9ff;
-  border-radius: 12px;
-  border: 2px solid #e8e8e8;
-}
-.assignee-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #4f46e5;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-}
-.btn-submit {
-  width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-}
-.btn-submit:active { transform: scale(0.98); }
+.price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.price-display { background: #f8f9ff; border: 2px solid #e8e8e8; border-radius: 12px; padding: 14px 16px; }
+.price-display .value { font-size: 20px; font-weight: 700; color: #4f46e5; }
+.price-display .unit { font-size: 12px; color: #999; margin-top: 2px; }
+.assignee-badge { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #f8f9ff; border-radius: 12px; border: 2px solid #e8e8e8; }
+.assignee-avatar { width: 36px; height: 36px; border-radius: 50%; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.btn-submit { width: 100%; padding: 18px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 15px rgba(79,70,229,0.4); }
 .btn-submit:disabled { opacity: 0.6; }
-.success-msg {
-  display: none;
-  background: #f0fff4;
-  border: 2px solid #27ae60;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  color: #27ae60;
-  font-weight: 600;
-  margin-top: 12px;
-}
-.error-msg {
-  display: none;
-  background: #fff0f0;
-  border: 2px solid #e74c3c;
-  border-radius: 12px;
-  padding: 16px;
-  text-align: center;
-  color: #e74c3c;
-  font-weight: 600;
-  margin-top: 12px;
-}
-.spinner {
-  display: none;
-  text-align: center;
-  padding: 12px;
-  color: #4f46e5;
-  font-weight: 600;
-}
+.success-msg { display: none; background: #f0fff4; border: 2px solid #27ae60; border-radius: 12px; padding: 16px; text-align: center; color: #27ae60; font-weight: 600; margin-top: 12px; }
+.error-msg { display: none; background: #fff0f0; border: 2px solid #e74c3c; border-radius: 12px; padding: 16px; text-align: center; color: #e74c3c; font-weight: 600; margin-top: 12px; }
+.spinner { display: none; text-align: center; padding: 12px; color: #4f46e5; font-weight: 600; }
 </style>
 </head>
 <body>
-
 <h1>📦 eBay仕入れ入力</h1>
-
 <div class="card">
   <label>商品URL</label>
-  <input type="url" id="url" placeholder="https://jp.mercari.com/item/..." 
-    oninput="detectSite()" autocomplete="off" autocorrect="off">
+  <input type="url" id="url" placeholder="https://jp.mercari.com/item/..." oninput="detectSite()" autocomplete="off">
   <div id="site-badge"></div>
 </div>
-
 <div class="card">
   <label>仕入れ価格（円）</label>
-  <input type="number" id="price" placeholder="例: 8500" 
-    oninput="calcSellPrice()" inputmode="numeric">
-  
-  <div class="price-row" style="margin-top: 12px;">
+  <input type="number" id="price" placeholder="例: 8500" oninput="calcSellPrice()" inputmode="numeric">
+  <div class="price-row">
     <div>
       <label style="font-size:11px;">販売価格（USD）</label>
-      <div class="price-display">
-        <div class="value" id="sell-usd">-</div>
-        <div class="unit">自動計算</div>
-      </div>
+      <div class="price-display"><div class="value" id="sell-usd">-</div><div class="unit">自動計算</div></div>
     </div>
     <div>
       <label style="font-size:11px;">推定利益（円）</label>
-      <div class="price-display">
-        <div class="value" id="profit-jpy">-</div>
-        <div class="unit">約30%</div>
-      </div>
+      <div class="price-display"><div class="value" id="profit-jpy">-</div><div class="unit">約30%</div></div>
     </div>
   </div>
 </div>
-
 <div class="card">
   <label>担当外注</label>
   <div class="assignee-badge">
     <div class="assignee-avatar" id="assignee-avatar">-</div>
-    <div>
-      <div id="assignee-name" style="font-weight:700; font-size:16px;">自動振り分け</div>
-      <div style="font-size:12px; color:#999;">ラウンドロビン</div>
-    </div>
+    <div><div id="assignee-name" style="font-weight:700;font-size:16px;">自動振り分け</div><div style="font-size:12px;color:#999;">ラウンドロビン</div></div>
   </div>
 </div>
-
-<button class="btn-submit" id="submit-btn" onclick="submitForm()">
-  スプレッドシートに入力する
-</button>
-
+<button class="btn-submit" id="submit-btn" onclick="submitForm()">スプレッドシートに入力する</button>
 <div class="spinner" id="spinner">⏳ 送信中...</div>
 <div class="success-msg" id="success-msg">✅ スプレッドシートに入力しました！</div>
-<div class="error-msg" id="error-msg">❌ エラーが発生しました。再度お試しください。</div>
-
+<div class="error-msg" id="error-msg">❌ エラーが発生しました。</div>
+<iframe id="gas-frame" style="display:none;" width="1" height="1"></iframe>
 <script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxzjYCSlWtDyjWUFw0_EaCA7ZALLKLYDD6ZbahcOcU3h6ShU3fmJPflhlIPm0t1z41u/exec';
 const ASSIGNEES = ['ミレ', 'マイ', 'アン'];
-const EC_CODES = {
-  'mercari': 2,
-  'yahoo': 8,
-  'rakuma': 7,
-  'trefac': 21,
-  'other': 2
-};
-
+const EC_CODES = {'mercari':2,'yahoo':8,'rakuma':7,'trefac':21,'other':2};
 const SHEETS = {
-  'ミレ': { id: '1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY', sheet: 'ミレ様出品シート① ' },
-  'マイ': { id: '1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4', sheet: 'マイ様出品シート① ' },
-  'アン': { id: '103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g', sheet: 'Anh様出品シート①' }
+  'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY', sheet:'ミレ様出品シート① '},
+  'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4', sheet:'マイ様出品シート① '},
+  'アン': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g', sheet:'Anh様出品シート①'}
 };
-
 let currentAssigneeIndex = parseInt(localStorage.getItem('assigneeIndex') || '0');
 let detectedSite = 'other';
 
 function detectSite() {
   const url = document.getElementById('url').value;
   const badge = document.getElementById('site-badge');
-  
-  if (url.includes('mercari.com')) {
-    detectedSite = 'mercari';
-    badge.innerHTML = '<span class="site-badge site-mercari">🛍 メルカリ</span>';
-  } else if (url.includes('yahoo') || url.includes('aucfan')) {
-    detectedSite = 'yahoo';
-    badge.innerHTML = '<span class="site-badge site-yahoo">🟡 ヤフオク</span>';
-  } else if (url.includes('fril') || url.includes('rakuma')) {
-    detectedSite = 'rakuma';
-    badge.innerHTML = '<span class="site-badge site-rakuma">💜 ラクマ</span>';
-  } else if (url.includes('trefac')) {
-    detectedSite = 'trefac';
-    badge.innerHTML = '<span class="site-badge site-trefac">🟢 トレファク</span>';
-  } else if (url.length > 5) {
-    detectedSite = 'other';
-    badge.innerHTML = '<span class="site-badge site-other">🌐 その他</span>';
-  } else {
-    badge.innerHTML = '';
-  }
+  if (url.includes('mercari.com')) { detectedSite='mercari'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリ</span>'; }
+  else if (url.includes('yahoo')||url.includes('aucfan')) { detectedSite='yahoo'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 ヤフオク</span>'; }
+  else if (url.includes('fril')||url.includes('rakuma')) { detectedSite='rakuma'; badge.innerHTML='<span class="site-badge site-rakuma">💜 ラクマ</span>'; }
+  else if (url.includes('trefac')) { detectedSite='trefac'; badge.innerHTML='<span class="site-badge site-trefac">🟢 トレファク</span>'; }
+  else if (url.length>5) { detectedSite='other'; badge.innerHTML='<span class="site-badge site-other">🌐 その他</span>'; }
+  else { badge.innerHTML=''; }
   updateAssignee();
 }
 
 function calcSellPrice() {
   const price = parseFloat(document.getElementById('price').value);
-  if (!price) {
-    document.getElementById('sell-usd').textContent = '-';
-    document.getElementById('profit-jpy').textContent = '-';
-    return;
-  }
-  const sellJpy = price / 0.7;
-  const sellUsd = Math.round((sellJpy + 5000) / 158 / 0.87 * 100) / 100;
-  const profitJpy = Math.round(sellJpy - price);
-  document.getElementById('sell-usd').textContent = '$' + sellUsd.toFixed(2);
-  document.getElementById('profit-jpy').textContent = '¥' + profitJpy.toLocaleString();
+  if (!price) { document.getElementById('sell-usd').textContent='-'; document.getElementById('profit-jpy').textContent='-'; return; }
+  const sellJpy = price/0.7;
+  const sellUsd = Math.round((sellJpy+5000)/158/0.87*100)/100;
+  document.getElementById('sell-usd').textContent='$'+sellUsd.toFixed(2);
+  document.getElementById('profit-jpy').textContent='¥'+Math.round(sellJpy-price).toLocaleString();
 }
 
 function updateAssignee() {
-  const names = ASSIGNEES;
-  const name = names[currentAssigneeIndex % names.length];
+  const name = ASSIGNEES[currentAssigneeIndex % ASSIGNEES.length];
   document.getElementById('assignee-name').textContent = name;
   document.getElementById('assignee-avatar').textContent = name[0];
 }
-
 updateAssignee();
 
-async function submitForm() {
+function submitForm() {
   const url = document.getElementById('url').value.trim();
   const price = document.getElementById('price').value.trim();
-  
-  if (!url || !price) {
-    alert('URLと仕入れ価格を入力してください');
-    return;
-  }
-
+  if (!url || !price) { alert('URLと仕入れ価格を入力してください'); return; }
   const btn = document.getElementById('submit-btn');
   const spinner = document.getElementById('spinner');
   const successMsg = document.getElementById('success-msg');
   const errorMsg = document.getElementById('error-msg');
-
   btn.disabled = true;
   spinner.style.display = 'block';
   successMsg.style.display = 'none';
   errorMsg.style.display = 'none';
-
   const assigneeName = ASSIGNEES[currentAssigneeIndex % ASSIGNEES.length];
   const sheet = SHEETS[assigneeName];
   const ecCode = EC_CODES[detectedSite] || 2;
-  const sellUsd = parseFloat(document.getElementById('sell-usd').textContent.replace('$',''));
-  const now = new Date().toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'}).replace(/\//g, '-');
-
-  try {
-    const response = await fetch(`https://script.google.com/macros/s/AKfycbx2Elf144nvl-QG9kOH36BoXrM9XNDTaeuiuRaH6jy13es9e6p5be8-HqForssK8B1N/exec`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        spreadsheetId: sheet.id,
-        sheetName: sheet.sheet,
-        url: url,
-        price: parseInt(price),
-        sellUsd: sellUsd,
-        ecCode: ecCode,
-        assignee: assigneeName,
-        datetime: now
-      })
-    });
-
+  const sellUsd = parseFloat(document.getElementById('sell-usd').textContent.replace('$','')) || 0;
+  const params = new URLSearchParams({
+    spreadsheetId: sheet.id,
+    sheetName: sheet.sheet,
+    url: url,
+    ecCode: ecCode,
+    price: parseInt(price),
+    sellUsd: sellUsd,
+    assignee: assigneeName
+  });
+  const gasUrl = GAS_URL + '?' + params.toString();
+  document.getElementById('gas-frame').src = gasUrl;
+  setTimeout(function() {
     currentAssigneeIndex++;
     localStorage.setItem('assigneeIndex', currentAssigneeIndex);
     updateAssignee();
-
     spinner.style.display = 'none';
     successMsg.style.display = 'block';
     btn.disabled = false;
-
     document.getElementById('url').value = '';
     document.getElementById('price').value = '';
     document.getElementById('site-badge').innerHTML = '';
     document.getElementById('sell-usd').textContent = '-';
     document.getElementById('profit-jpy').textContent = '-';
-
-    setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
-
-  } catch(e) {
-    spinner.style.display = 'none';
-    errorMsg.style.display = 'block';
-    btn.disabled = false;
-  }
+    setTimeout(function() { successMsg.style.display = 'none'; }, 3000);
+  }, 3000);
 }
 </script>
 </body>
