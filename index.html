@@ -130,7 +130,7 @@ function submitForm() {
     assignee: assigneeName
   });
   const gasUrl = GAS_URL + '?' + params.toString();
-  document.getElementById('gas-frame').src = gasUrl;
+  var w = window.open(gasUrl, '_blank'); setTimeout(function(){ if(w) w.close(); }, 2000);
   setTimeout(function() {
     currentAssigneeIndex++;
     localStorage.setItem('assigneeIndex', currentAssigneeIndex);
