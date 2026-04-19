@@ -300,7 +300,7 @@ async function submitForm() {
 
   try {
     const params = new URLSearchParams({spreadsheetId: sheet.id, sheetName: sheet.sheet, url: url, ecCode: ecCode, price: parseInt(price), sellUsd: sellUsd, assignee: assigneeName, datetime: now});
-    const response = await fetch(GAS_URL + '?' + params.toString(), {redirect: 'follow'});
+    const response = await fetch(GAS_URL, {method: 'POST', body: params});
 
     currentAssigneeIndex++;
     localStorage.setItem('assigneeIndex', currentAssigneeIndex);
