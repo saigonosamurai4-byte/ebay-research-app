@@ -67,7 +67,7 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbyJlrxagzmRgEQZUNeEab4nzYi48NNivw4zQfgCJOqbfI0EjMp3l4iN8ETNN00ZW99t/exec';
 const ASSIGNEES = ['ミレ', 'マイ', 'アン'];
-const EC_CODES = {'mercari':2,'yahoo':8,'rakuma':7,'trefac':21,'other':2};
+const EC_CODES = {'mercari':2,'mercari_shops':6,'yahoo':8,'rakuma':7,'trefac':21,'other':2};
 const SHEETS = {
   'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY', sheet:'ミレ様出品シート① '},
   'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4', sheet:'マイ様出品シート① '},
@@ -79,7 +79,7 @@ let detectedSite = 'other';
 function detectSite() {
   const url = document.getElementById('url').value;
   const badge = document.getElementById('site-badge');
-  if (url.includes('mercari.com')) { detectedSite='mercari'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリ</span>'; }
+  if (url.includes('mercari.com/shops')) { detectedSite='mercari_shops'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリShops</span>'; } else if (url.includes('mercari.com')) { detectedSite='mercari'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリ</span>'; }
   else if (url.includes('yahoo')||url.includes('aucfan')) { detectedSite='yahoo'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 ヤフオク</span>'; }
   else if (url.includes('fril')||url.includes('rakuma')) { detectedSite='rakuma'; badge.innerHTML='<span class="site-badge site-rakuma">💜 ラクマ</span>'; }
   else if (url.includes('trefac')) { detectedSite='trefac'; badge.innerHTML='<span class="site-badge site-trefac">🟢 トレファク</span>'; }
