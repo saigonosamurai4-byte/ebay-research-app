@@ -103,7 +103,7 @@ function detectSite() {
   else if (url.includes('rakuten.co.jp/')&&!url.includes('fril')) { detectedSite='rakuten'; badge.innerHTML='<span class="site-badge site-other">🔴 楽天市場</span>'; }
   else if (url.includes('fril.jp')||url.includes('rakuma')) { detectedSite='rakuma'; badge.innerHTML='<span class="site-badge site-rakuma">💜 ラクマ</span>'; }
   else if (url.includes('auctions.yahoo')||url.includes('aucfan')) { detectedSite='yahoo'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 ヤフオク</span>'; }
-  else if (url.includes('netmall.hardoff')) { detectedSite='netmall'; badge.innerHTML='<span class="site-badge site-other">⚫ ネットモール</span>'; }
+  else if (url.includes('netmall.hardoff')) { detectedSite='offmall'; badge.innerHTML='<span class="site-badge site-other">⚫ オフモール</span>'; }
   else if (url.includes('suruga-ya')) { detectedSite='suruga'; badge.innerHTML='<span class="site-badge site-other">🟢 駿河屋</span>'; }
   else if (url.includes('pokemoncenter-online')) { detectedSite='pokemon'; badge.innerHTML='<span class="site-badge site-other">🔴 ポケモンセンター</span>'; }
   else if (url.includes('disneystore')||url.includes('shopdisney')) { detectedSite='disney'; badge.innerHTML='<span class="site-badge site-other">💙 ディズニー</span>'; }
@@ -117,7 +117,7 @@ function detectSite() {
   else if (url.includes('e-earphone')) { detectedSite='eearphone'; badge.innerHTML='<span class="site-badge site-other">🎧 eイヤホン</span>'; }
   else if (url.includes('sorano-ueten')) { detectedSite='sorano'; badge.innerHTML='<span class="site-badge site-other">☁️ そらのうえ店</span>'; }
   else if (url.includes('kind.al')||url.includes('kindal.jp')) { detectedSite='kindal'; badge.innerHTML='<span class="site-badge site-other">⚫ Kindal</span>'; }
-  else if (url.includes('kaitori-okoku')) { detectedSite='kaitori'; badge.innerHTML='<span class="site-badge site-other">👑 買取王国</span>'; }
+  else if (url.includes('kaitori-okoku')||url.includes('okoku.jp')) { detectedSite='kaitori'; badge.innerHTML='<span class="site-badge site-other">👑 買取王国</span>'; }
   else if (url.includes('bape.com')) { detectedSite='bape'; badge.innerHTML='<span class="site-badge site-other">🦍 BAPE</span>'; }
   else if (url.includes('ragtag')) { detectedSite='ragtag'; badge.innerHTML='<span class="site-badge site-other">🔴 RAGTAG</span>'; }
   else if (url.includes('kosho.or.jp')) { detectedSite='kosho'; badge.innerHTML='<span class="site-badge site-other">📚 日本の古本屋</span>'; }
