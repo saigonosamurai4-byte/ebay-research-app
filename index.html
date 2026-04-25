@@ -70,7 +70,7 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxci76rSV3KA3eG0eWPZyKZN90lOjp3Mf1WGupKwGvUzSCIfVnYbBMxj1B0SeMDuAcY/exec';
 const ASSIGNEES = ['ミレ', 'マイ', 'アン'];
-const EC_CODES = {'mercari':2,'mercari_shops':6,'yahoo':8,'rakuma':7,'trefac':21,'other':2};
+const EC_CODES = {'amazon':1,'mercari':2,'yahoo_fril':3,'yahoo_shop':4,'rakuten':5,'mercari_shops':6,'rakuma':7,'yahoo':8,'netmall':9,'suruga':10,'pokemon':11,'disney':12,'geo':13,'digimart':14,'trefac_general':15,'2ndstreet':16,'mandarake':17,'kojima':18,'eearphone':19,'sorano':20,'trefac':21,'kindal':22,'kaitori':23,'bape':24,'ragtag':25,'kosho':26,'offmall':27,'other':2};
 const SHEETS = {
   'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY'},
   'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4'},
@@ -95,11 +95,33 @@ function selectAssignee(name) {
 function detectSite() {
   const url = document.getElementById('url').value;
   const badge = document.getElementById('site-badge');
-  if (url.includes('mercari.com/shops')) { detectedSite='mercari_shops'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリShops</span>'; }
+  if (url.includes('amazon.')) { detectedSite='amazon'; badge.innerHTML='<span class="site-badge site-other">📦 Amazon</span>'; }
+  else if (url.includes('mercari.com/shops')) { detectedSite='mercari_shops'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリShops</span>'; }
   else if (url.includes('mercari.com')) { detectedSite='mercari'; badge.innerHTML='<span class="site-badge site-mercari">🛍 メルカリ</span>'; }
-  else if (url.includes('yahoo')||url.includes('aucfan')) { detectedSite='yahoo'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 ヤフオク</span>'; }
-  else if (url.includes('fril')||url.includes('rakuma')) { detectedSite='rakuma'; badge.innerHTML='<span class="site-badge site-rakuma">💜 ラクマ</span>'; }
-  else if (url.includes('trefac')) { detectedSite='trefac'; badge.innerHTML='<span class="site-badge site-trefac">🟢 トレファク</span>'; }
+  else if (url.includes('paypayfleamarket')||url.includes('paypay-fleamarket')) { detectedSite='yahoo_fril'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 Yahoo!フリマ</span>'; }
+  else if (url.includes('shopping.yahoo')) { detectedSite='yahoo_shop'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 Yahoo!ショッピング</span>'; }
+  else if (url.includes('rakuten.co.jp/')&&!url.includes('fril')) { detectedSite='rakuten'; badge.innerHTML='<span class="site-badge site-other">🔴 楽天市場</span>'; }
+  else if (url.includes('fril.jp')||url.includes('rakuma')) { detectedSite='rakuma'; badge.innerHTML='<span class="site-badge site-rakuma">💜 ラクマ</span>'; }
+  else if (url.includes('auctions.yahoo')||url.includes('aucfan')) { detectedSite='yahoo'; badge.innerHTML='<span class="site-badge site-yahoo">🟡 ヤフオク</span>'; }
+  else if (url.includes('netmall.hardoff')) { detectedSite='netmall'; badge.innerHTML='<span class="site-badge site-other">⚫ ネットモール</span>'; }
+  else if (url.includes('suruga-ya')) { detectedSite='suruga'; badge.innerHTML='<span class="site-badge site-other">🟢 駿河屋</span>'; }
+  else if (url.includes('pokemoncenter-online')) { detectedSite='pokemon'; badge.innerHTML='<span class="site-badge site-other">🔴 ポケモンセンター</span>'; }
+  else if (url.includes('disneystore')||url.includes('shopdisney')) { detectedSite='disney'; badge.innerHTML='<span class="site-badge site-other">💙 ディズニー</span>'; }
+  else if (url.includes('geo-online')||url.includes('ec.geo-online')) { detectedSite='geo'; badge.innerHTML='<span class="site-badge site-other">🔵 GEO</span>'; }
+  else if (url.includes('digimart')) { detectedSite='digimart'; badge.innerHTML='<span class="site-badge site-other">🎸 デジマート</span>'; }
+  else if (url.includes('trefac.jp/store/tcpsb')) { detectedSite='trefac'; badge.innerHTML='<span class="site-badge site-trefac">🟢 TREFAC FASHION</span>'; }
+  else if (url.includes('trefac')) { detectedSite='trefac_general'; badge.innerHTML='<span class="site-badge site-trefac">🟢 トレファク</span>'; }
+  else if (url.includes('2ndstreet')) { detectedSite='2ndstreet'; badge.innerHTML='<span class="site-badge site-other">🔵 セカスト</span>'; }
+  else if (url.includes('mandarake')) { detectedSite='mandarake'; badge.innerHTML='<span class="site-badge site-other">⚫ まんだらけ</span>'; }
+  else if (url.includes('kojima.net')) { detectedSite='kojima'; badge.innerHTML='<span class="site-badge site-other">🔵 コジマ</span>'; }
+  else if (url.includes('e-earphone')) { detectedSite='eearphone'; badge.innerHTML='<span class="site-badge site-other">🎧 eイヤホン</span>'; }
+  else if (url.includes('sorano-ueten')) { detectedSite='sorano'; badge.innerHTML='<span class="site-badge site-other">☁️ そらのうえ店</span>'; }
+  else if (url.includes('kind.al')||url.includes('kindal.jp')) { detectedSite='kindal'; badge.innerHTML='<span class="site-badge site-other">⚫ Kindal</span>'; }
+  else if (url.includes('kaitori-okoku')) { detectedSite='kaitori'; badge.innerHTML='<span class="site-badge site-other">👑 買取王国</span>'; }
+  else if (url.includes('bape.com')) { detectedSite='bape'; badge.innerHTML='<span class="site-badge site-other">🦍 BAPE</span>'; }
+  else if (url.includes('ragtag')) { detectedSite='ragtag'; badge.innerHTML='<span class="site-badge site-other">🔴 RAGTAG</span>'; }
+  else if (url.includes('kosho.or.jp')) { detectedSite='kosho'; badge.innerHTML='<span class="site-badge site-other">📚 日本の古本屋</span>'; }
+  else if (url.includes('offmall')||url.includes('off-mall')) { detectedSite='offmall'; badge.innerHTML='<span class="site-badge site-other">⚫ オフモール</span>'; }
   else if (url.length>5) { detectedSite='other'; badge.innerHTML='<span class="site-badge site-other">🌐 その他</span>'; }
   else { badge.innerHTML=''; }
 }
