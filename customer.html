@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カスタマー対応</title>
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 16px;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 14px;
+  line-height: 1.5;
+}
+h1 { font-size: 20px; margin: 0 0 16px; }
+h2 { font-size: 16px; margin: 16px 0 8px; }
+.tabs {
+  display: flex;
+  background: white;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #e5e5e7;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+}
+.tab.active { background: #007aff; color: white; }
+.section {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e5e7;
+  margin-bottom: 16px;
+}
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  font-size: 14px;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:disabled { background: #aeaeb2; }
+button.secondary { background: #34c759; }
+button.copy { background: #ff9500; padding: 8px; font-size: 13px; }
+.translation, .reply {
+  background: #f5f5f7;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+.label {
+  font-size: 12px;
+  color: #6e6e73;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.quick-btn {
+  padding: 10px;
+  background: #e5f1ff;
+  color: #007aff;
+  border: 1px solid #007aff;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.quick-btn.selected {
+  background: #007aff;
+  color: white;
+}
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #6e6e73;
+}
+.history-item {
+  border-bottom: 1px solid #e5e5e7;
+  padding: 12px 0;
+  font-size: 13px;
+}
+.history-item:last-child { border-bottom: none; }
+.history-q { color: #6e6e73; margin-bottom: 4px; }
+.history-a { color: #1d1d1f; }
+.rating {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.rating button {
+  flex: 1;
+  padding: 6px;
+  font-size: 12px;
+  margin: 0;
+}
+.rating .good { background: #34c759; }
+.rating .bad { background: #ff3b30; }
+.copied { color: #34c759; font-size: 12px; margin-left: 8px; }
+.examples-info {
+  font-size: 12px;
+  color: #6e6e73;
+  background: #f5f5f7;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+</style>
+</head>
+<body>
+<h1>📨 カスタマー対応</h1>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('reply')">返信生成</div>
+  <div class="tab" onclick="showTab('quick')">クイック</div>
+  <div class="tab" onclick="showTab('history')">履歴</div>
+</div>
+
+<!-- 返信生成タブ -->
+<div id="tab-reply" class="tab-content">
+  <div class="section">
+    <div class="label">📥 受信メッセージ（英語）</div>
+    <textarea id="incoming" placeholder="eBayから届いたメッセージを貼り付け..."></textarea>
+    <button onclick="processMessage()">日本語に翻訳 + 返信を生成</button>
+  </div>
+
+  <div class="section" id="result-section" style="display:none;">
+    <div class="label">🇯🇵 日本語訳</div>
+    <div class="translation" id="translation"></div>
+    
+    <div class="label">✏️ 返信内容（編集可）</div>
+    <textarea id="reply-jp" placeholder="日本語で返信内容を入力..."></textarea>
+    <button class="secondary" onclick="generateEnglish()">英訳して送信用文章を生成</button>
+    
+    <div id="english-section" style="display:none;">
+      <div class="label">🇺🇸 英訳（コピーしてeBayへ）</div>
+      <div class="reply" id="reply-en"></div>
+      <button class="copy" onclick="copyText('reply-en')">📋 コピー</button>
+      <span id="copied-msg" class="copied" style="display:none;">コピーしました!</span>
+      
+      <div class="rating">
+        <button class="good" onclick="rateReply(true)">👍 良い返事</button>
+        <button class="bad" onclick="rateReply(false)">👎 修正必要</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- クイックタブ -->
+<div id="tab-quick" class="tab-content" style="display:none;">
+  <div class="section">
+    <div class="label">📥 受信メッセージ（英語、任意）</div>
+    <textarea id="quick-incoming" placeholder="メッセージがあれば貼り付け..." rows="3"></textarea>
+    
+    <div class="label">⚡ シチュエーション選択</div>
+    <div class="quick-buttons" id="quick-buttons">
+      <div class="quick-btn" data-key="在庫切れ">在庫切れ</div>
+      <div class="quick-btn" data-key="代替提案">代替提案</div>
+      <div class="quick-btn" data-key="画像送付">画像送付</div>
+      <div class="quick-btn" data-key="配送状況">配送状況</div>
+      <div class="quick-btn" data-key="関税について">関税</div>
+      <div class="quick-btn" data-key="返品受付">返品受付</div>
+      <div class="quick-btn" data-key="返品拒否">返品拒否</div>
+      <div class="quick-btn" data-key="値下げ受諾">値下げ受諾</div>
+      <div class="quick-btn" data-key="値下げ拒否">値下げ拒否</div>
+      <div class="quick-btn" data-key="商品状態">商品状態</div>
+    </div>
+    
+    <div class="label">📝 追加情報（任意）</div>
+    <input type="text" id="quick-extra" placeholder="例: 価格$50、3日後発送 など">
+    
+    <button onclick="generateQuick()">返信を生成</button>
+  </div>
+  
+  <div class="section" id="quick-result" style="display:none;">
+    <div class="label">🇯🇵 日本語</div>
+    <div class="translation" id="quick-jp"></div>
+    
+    <div class="label">🇺🇸 英訳</div>
+    <div class="reply" id="quick-en"></div>
+    <button class="copy" onclick="copyText('quick-en')">📋 コピー</button>
+    <span id="quick-copied" class="copied" style="display:none;">コピーしました!</span>
+  </div>
+</div>
+
+<!-- 履歴タブ -->
+<div id="tab-history" class="tab-content" style="display:none;">
+  <div class="section">
+    <div class="examples-info">良かった返事（👍）が学習データになります。次回以降の返信生成で参考にされます。</div>
+    <h2>👍 良かった返事</h2>
+    <div id="good-history">
+      <div style="color: #6e6e73; text-align: center; padding: 20px;">まだありません</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let API_KEY = localStorage.getItem('claude_api_key') || '';
+if (!API_KEY) {
+  API_KEY = prompt('Claude APIキーを入力してください（初回のみ）:');
+  if (API_KEY) localStorage.setItem('claude_api_key', API_KEY);
+}
+
+let currentReply = { incoming: '', translation: '', replyJp: '', replyEn: '' };
+let history = JSON.parse(localStorage.getItem('customer_history') || '[]');
+let goodReplies = JSON.parse(localStorage.getItem('good_replies') || '[]');
+let selectedQuickKeys = [];
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).style.display = 'block';
+  if (name === 'history') renderHistory();
+}
+
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content[0].text;
+}
+
+async function processMessage() {
+  const incoming = document.getElementById('incoming').value.trim();
+  if (!incoming) { alert('メッセージを入力してください'); return; }
+  
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '処理中...';
+  
+  try {
+    // 翻訳と返信案を同時に生成
+    const examples = goodReplies.slice(-5).map(r => 
+      `[質問]${r.incoming}\n[返信]${r.replyEn}`
+    ).join('\n\n');
+    
+    const examplesText = examples ? `\n\n=== 過去の良い返事の例 ===\n${examples}\n` : '';
+    
+    const prompt = `あなたはeBayセラー(saabshopjapan)のカスタマー対応アシスタントです。
+
+以下のメッセージを処理してください:
+
+[受信メッセージ]
+${incoming}
+${examplesText}
+=== 指示 ===
+1. メッセージを日本語に翻訳
+2. 適切な返信を日本語で生成
+
+【返信のトーン】
+- 簡潔で必要最低限
+- 余分な提案や言い回しは避ける（例: 「他に画像が必要なら言って」など不要）
+- "Hello," "Thank you for your message." などのビジネス挨拶は使う
+- "Best regards, saabshopjapan" で締める
+- 商品の状態を聞かれたら、状態の回答だけ
+- 在庫がない場合、無在庫販売多いので謝罪+代替案を提案
+
+【出力形式】
+JSON形式で以下:
+{
+  "translation": "日本語訳",
+  "reply_jp": "日本語の返信案"
+}`;
+
+    const result = await callClaude(prompt);
+    const json = JSON.parse(result.match(/\{[\s\S]*\}/)[0]);
+    
+    document.getElementById('translation').textContent = json.translation;
+    document.getElementById('reply-jp').value = json.reply_jp;
+    document.getElementById('result-section').style.display = 'block';
+    
+    currentReply.incoming = incoming;
+    currentReply.translation = json.translation;
+    currentReply.replyJp = json.reply_jp;
+  } catch (e) {
+    alert('エラー: ' + e.message);
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '日本語に翻訳 + 返信を生成';
+}
+
+async function generateEnglish() {
+  const replyJp = document.getElementById('reply-jp').value.trim();
+  if (!replyJp) { alert('返信内容を入力してください'); return; }
+  
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '英訳中...';
+  
+  try {
+    const prompt = `以下の日本語の返信を、eBayの英語メッセージとして自然な英語に翻訳してください。
+
+【ルール】
+- ビジネスライクで丁寧
+- 不要な言い回しを足さない
+- "Hello," で始め "Best regards, saabshopjapan" で締める
+
+[日本語]
+${replyJp}
+
+英訳のみ出力してください。`;
+
+    const en = await callClaude(prompt);
+    document.getElementById('reply-en').textContent = en.trim();
+    document.getElementById('english-section').style.display = 'block';
+    
+    currentReply.replyEn = en.trim();
+  } catch (e) {
+    alert('エラー: ' + e.message);
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '英訳して送信用文章を生成';
+}
+
+function copyText(elementId) {
+  const text = document.getElementById(elementId).textContent;
+  navigator.clipboard.writeText(text);
+  const msg = document.getElementById(elementId === 'reply-en' ? 'copied-msg' : 'quick-copied');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+
+function rateReply(isGood) {
+  if (isGood) {
+    goodReplies.push({...currentReply, date: new Date().toISOString()});
+    localStorage.setItem('good_replies', JSON.stringify(goodReplies));
+    alert('👍 学習データに追加しました');
+  }
+  
+  history.unshift({...currentReply, rating: isGood, date: new Date().toISOString()});
+  if (history.length > 50) history = history.slice(0, 50);
+  localStorage.setItem('customer_history', JSON.stringify(history));
+}
+
+// クイックタブ
+document.querySelectorAll('.quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('selected');
+    const key = btn.dataset.key;
+    if (selectedQuickKeys.includes(key)) {
+      selectedQuickKeys = selectedQuickKeys.filter(k => k !== key);
+    } else {
+      selectedQuickKeys.push(key);
+    }
+  });
+});
+
+async function generateQuick() {
+  if (selectedQuickKeys.length === 0) {
+    alert('シチュエーションを選択してください');
+    return;
+  }
+  
+  const incoming = document.getElementById('quick-incoming').value.trim();
+  const extra = document.getElementById('quick-extra').value.trim();
+  
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '生成中...';
+  
+  try {
+    const examples = goodReplies.slice(-5).map(r => 
+      `[質問]${r.incoming}\n[返信]${r.replyEn}`
+    ).join('\n\n');
+    const examplesText = examples ? `\n=== 過去の良い返事 ===\n${examples}\n` : '';
+    
+    const prompt = `eBayセラー(saabshopjapan)として返信を作成。
+
+【シチュエーション】
+${selectedQuickKeys.join(', ')}
+
+${incoming ? '[受信メッセージ]\n' + incoming + '\n' : ''}
+${extra ? '[追加情報]\n' + extra + '\n' : ''}
+${examplesText}
+
+【ルール】
+- 簡潔、必要最低限
+- 余分な提案/言い回しなし
+- "Hello," で始め "Best regards, saabshopjapan" で締める
+- 在庫切れなら謝罪+代替案
+- 必要な情報のみ伝える
+
+【出力形式】JSON:
+{
+  "reply_jp": "日本語版",
+  "reply_en": "英語版"
+}`;
+
+    const result = await callClaude(prompt);
+    const json = JSON.parse(result.match(/\{[\s\S]*\}/)[0]);
+    
+    document.getElementById('quick-jp').textContent = json.reply_jp;
+    document.getElementById('quick-en').textContent = json.reply_en;
+    document.getElementById('quick-result').style.display = 'block';
+  } catch (e) {
+    alert('エラー: ' + e.message);
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '返信を生成';
+}
+
+function renderHistory() {
+  const div = document.getElementById('good-history');
+  if (goodReplies.length === 0) {
+    div.innerHTML = '<div style="color: #6e6e73; text-align: center; padding: 20px;">まだありません</div>';
+    return;
+  }
+  
+  div.innerHTML = goodReplies.slice(-20).reverse().map(r => `
+    <div class="history-item">
+      <div class="history-q"><strong>Q:</strong> ${r.incoming.substring(0, 100)}${r.incoming.length > 100 ? '...' : ''}</div>
+      <div class="history-a"><strong>A:</strong> ${(r.replyEn || '').substring(0, 150)}${(r.replyEn || '').length > 150 ? '...' : ''}</div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>
