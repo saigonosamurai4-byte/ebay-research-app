@@ -327,7 +327,8 @@ JSON形式で以下:
     currentReply.translation = json.translation;
     currentReply.replyJp = json.reply_jp;
   } catch (e) {
-    alert('エラー: ' + e.message);
+    console.error(e);
+    alert('エラー: ' + e.message + '\n\n詳細はF12のConsoleで確認してください');
   }
   
   btn.disabled = false;
