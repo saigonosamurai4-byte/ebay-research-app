@@ -254,23 +254,15 @@ function showTab(name) {
   if (name === 'history') renderHistory();
 }
 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwyc6uv74jcxkJ1Ly-s7WF_dbSOogQPGsuIG43p--xPzUpqoNTvhd-aVRZeyh1ONg2f/exec';
+
 async function callClaude(prompt) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
+  const url = GAS_URL + '?action=claude' + 
+              '&apiKey=' + encodeURIComponent(API_KEY) +
+              '&prompt=' + encodeURIComponent(prompt);
+  const res = await fetch(url);
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error.message);
   return data.content[0].text;
 }
 
