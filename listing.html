@@ -379,8 +379,11 @@ async function generate() {
     "Item Weight": ""
   },
   "condition_description": "英語、状態の詳細説明、画像から判断できる傷・汚れ・特徴を具体的に記載",
-  "description_en": "英語の説明文。以下の構成で200-350語：1)商品概要 2)特徴・スペック 3)使用シーン 4)サイズ詳細 5)状態 6)■Source of Purchase（購入元）：We source authentic items from trusted Japanese reuse stores, pawn shops, antique markets, and authorized retailers. All items are guaranteed 100% authentic. 7)■Eco-Friendly Commitment（環境配慮）：By giving pre-owned items a second life, we contribute to reducing waste and promoting sustainable consumption.",
-  "description_ja": "日本語の説明文。同じ構成で日本語版",
+  "ebay_brand": "ブランド英語",
+  "ebay_size_label": "サイズ表記英語",
+  "ebay_dimensions": "実寸（cm/inch併記）",
+  "ebay_color_en": "カラー英語",
+  "ebay_material_en": "素材英語",
   "price_ai_usd": "市場相場から推定する販売価格（USD、数字のみ）",
   "price_estimation_basis": "推定根拠（短く）",
   "mercari_title": "メルカリタイトル40文字以内。【】で一番伝えたい要素+ブランド+セールスポイント+カテゴリ+購入したくなるワード",
@@ -449,10 +452,72 @@ function displayResult(data, cost) {
     .join('');
   document.getElementById('specifics-table').innerHTML = specsHtml;
   
-  // Condition / Description
+  // Condition
   document.getElementById('ebay-condition').textContent = data.condition_description;
-  document.getElementById('ebay-desc').textContent = data.description_en || data.description || '';
-  document.getElementById('ebay-desc-ja').textContent = data.description_ja || '';
+  
+  // eBay Description (テンプレート形式・英語)
+  const ebayDescEN = `We offer immediate purchase approval.
+Our store deals exclusively in authentic products,
+so please feel confident in making your purchase.
+
+■Brand■
+${data.ebay_brand || data.brand || ''}
+
+■Size Label■
+${data.ebay_size_label || ''}
+
+■Dimensions (cm/inch)■
+${data.ebay_dimensions || ''}
+
+■Color■
+${data.ebay_color_en || ''}
+
+■Material■
+${data.ebay_material_en || ''}
+
+■Condition■
+${document.getElementById('condition').value}
+
+USED
+
+Check our store for more great items!
+
+■Source of Purchase■
+We source authentic items from trusted Japanese reuse stores, pawn shops, antique markets, and authorized retailers. All items are guaranteed 100% authentic.
+
+■Eco-Friendly Commitment■
+By giving pre-owned items a second life, we contribute to reducing waste and promoting sustainable consumption.
+
+Buy with confidence! All items are guaranteed authentic.`;
+
+  document.getElementById('ebay-desc').textContent = ebayDescEN;
+  
+  // 日本語版（参考）
+  const ebayDescJA = `■ブランド■
+${data.mercari_brand || ''}
+
+■サイズ表記■
+${data.mercari_size || data.ebay_size_label || ''}
+
+■サイズ実寸（cm/インチ）■
+${data.mercari_dimensions || data.ebay_dimensions || ''}
+
+■カラー■
+${data.mercari_color || ''}
+
+■素材■
+${data.mercari_material || ''}
+
+■状態■
+${document.getElementById('condition').value}
+
+■購入元■
+ブランドリユース店、質屋・古物市場など信頼できる正規品販売店から仕入れた正規品です。
+
+■環境配慮■
+中古品に第二の人生を与えることで、廃棄物削減とサステナブルな消費に貢献しています。`;
+  
+  document.getElementById('ebay-desc-ja').textContent = ebayDescJA;
   
   // 価格根拠
   if (data.price_estimation_basis) {
