@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出品アシスタント</title>
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin: 0; padding: 16px; background: #f5f5f7; color: #1d1d1f;
+  font-size: 14px; line-height: 1.5;
+}
+h1 { font-size: 20px; margin: 0 0 16px; }
+h2 { font-size: 15px; margin: 16px 0 8px; }
+.section {
+  background: white; padding: 16px; border-radius: 12px;
+  border: 1px solid #e5e5e7; margin-bottom: 16px;
+}
+.label {
+  font-size: 12px; color: #6e6e73; font-weight: 600;
+  margin-top: 12px; margin-bottom: 4px; text-transform: uppercase;
+}
+input, select, textarea {
+  width: 100%; padding: 10px;
+  border: 1px solid #d2d2d7; border-radius: 8px;
+  font-size: 14px; font-family: inherit;
+}
+textarea { min-height: 60px; resize: vertical; }
+button {
+  width: 100%; padding: 12px;
+  background: #007aff; color: white;
+  border: none; border-radius: 8px;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; margin-top: 10px;
+}
+button:disabled { background: #aeaeb2; }
+button.copy {
+  background: #ff9500; padding: 6px 10px;
+  font-size: 12px; width: auto; margin: 0;
+}
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; }
+.image-upload {
+  border: 2px dashed #d2d2d7; border-radius: 8px;
+  padding: 16px; text-align: center; cursor: pointer;
+  background: #fafafa;
+}
+.image-upload:hover { border-color: #007aff; }
+.image-preview {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-top: 8px;
+}
+.image-preview img {
+  width: 100%; aspect-ratio: 1; object-fit: cover;
+  border-radius: 6px; border: 1px solid #e5e5e7;
+}
+.image-item { position: relative; }
+.image-item .remove {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(0,0,0,0.6); color: white;
+  width: 22px; height: 22px; border-radius: 50%;
+  font-size: 12px; padding: 0; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.result {
+  background: #f5f5f7; padding: 12px;
+  border-radius: 8px; margin-top: 6px;
+  white-space: pre-wrap; font-size: 13px;
+  border: 1px solid #e5e5e7;
+}
+.result-row {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; gap: 8px; margin-bottom: 4px;
+}
+.price-box {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-top: 8px;
+}
+.price-card {
+  background: #f5f5f7; padding: 12px;
+  border-radius: 8px; text-align: center;
+}
+.price-card .title { font-size: 11px; color: #6e6e73; }
+.price-card .value { font-size: 18px; font-weight: 600; color: #007aff; }
+.price-card .sub { font-size: 11px; color: #6e6e73; }
+.profit {
+  background: #34c759; color: white;
+  padding: 8px; border-radius: 6px;
+  text-align: center; font-weight: 600; margin-top: 8px;
+}
+.tabs {
+  display: flex; gap: 4px; margin-bottom: 12px;
+  background: #e5e5e7; padding: 4px; border-radius: 8px;
+}
+.tab {
+  flex: 1; padding: 8px; text-align: center;
+  border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.tab.active { background: white; color: #007aff; }
+.copied { color: #34c759; font-size: 11px; }
+.loading {
+  text-align: center; padding: 30px;
+  color: #6e6e73;
+}
+.spinner {
+  width: 30px; height: 30px;
+  border: 3px solid #e5e5e7;
+  border-top-color: #007aff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.specifics-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.specifics-table td {
+  padding: 4px 6px; border-bottom: 1px solid #e5e5e7;
+}
+.specifics-table td:first-child {
+  color: #6e6e73; font-weight: 600; width: 40%;
+}
+</style>
+</head>
+<body>
+
+<h1>📸 出品アシスタント（バッグ専用）</h1>
+
+<!-- 入力セクション -->
+<div class="section">
+  <h2>📥 入力情報</h2>
+  
+  <div class="label">📷 商品画像（1〜5枚）</div>
+  <div class="image-upload" onclick="document.getElementById('img-input').click()">
+    タップして画像を選択
+  </div>
+  <input type="file" id="img-input" accept="image/*" multiple style="display:none" onchange="handleImages(event)">
+  <div class="image-preview" id="image-preview"></div>
+  
+  <div class="label">🏷 商品状態</div>
+  <select id="condition">
+    <option value="New with tags">New with tags（新品タグ付）</option>
+    <option value="New without tags">New without tags（新品タグなし）</option>
+    <option value="Like New">Like New（未使用に近い）</option>
+    <option value="Excellent" selected>Excellent（目立った傷や汚れなし）</option>
+    <option value="Very Good">Very Good（やや傷あり）</option>
+    <option value="Good">Good（使用感あり）</option>
+    <option value="Fair">Fair（傷や汚れあり）</option>
+  </select>
+  
+  <div class="label">📝 補足情報（年式・カラー・サイズ・ダメージなど）</div>
+  <textarea id="notes" placeholder="例: 2018年モデル、ブラック、Lサイズ、内側に小さな汚れあり"></textarea>
+  
+  <div class="row">
+    <div>
+      <div class="label">SKU</div>
+      <input type="text" id="sku" placeholder="例: 遠藤20260429">
+    </div>
+    <div>
+      <div class="label">仕入れ価格（円）</div>
+      <input type="number" id="cost" placeholder="例: 8000">
+    </div>
+  </div>
+  
+  <button onclick="generate()" id="gen-btn">🚀 出品情報を生成</button>
+</div>
+
+<!-- 結果セクション -->
+<div id="result" style="display:none;">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('ebay')">eBay</div>
+    <div class="tab" onclick="switchTab('mercari')">メルカリ</div>
+  </div>
+  
+  <!-- eBayタブ -->
+  <div id="tab-ebay">
+    <div class="section">
+      <h2>💰 推奨価格</h2>
+      <div class="price-box">
+        <div class="price-card">
+          <div class="title">AI推定</div>
+          <div class="value" id="price-ai">-</div>
+          <div class="sub">市場相場ベース</div>
+        </div>
+        <div class="price-card">
+          <div class="title">原価ベース</div>
+          <div class="value" id="price-cost">-</div>
+          <div class="sub">仕入×倍率</div>
+        </div>
+      </div>
+      <div class="profit" id="profit-info">利益計算中...</div>
+    </div>
+    
+    <div class="section">
+      <h2>📌 SEOタイトル <button class="copy" onclick="copy('ebay-title')">📋</button> <span id="copied-title" class="copied"></span></h2>
+      <div class="result" id="ebay-title"></div>
+    </div>
+    
+    <div class="section">
+      <h2>📋 Item Specifics <button class="copy" onclick="copySpecifics()">📋</button> <span id="copied-spec" class="copied"></span></h2>
+      <table class="specifics-table" id="specifics-table"></table>
+    </div>
+    
+    <div class="section">
+      <h2>🔍 Condition Description <button class="copy" onclick="copy('ebay-condition')">📋</button> <span id="copied-cond" class="copied"></span></h2>
+      <div class="result" id="ebay-condition"></div>
+    </div>
+    
+    <div class="section">
+      <h2>📝 Description（英語） <button class="copy" onclick="copy('ebay-desc')">📋</button> <span id="copied-desc" class="copied"></span></h2>
+      <div class="result" id="ebay-desc"></div>
+    </div>
+  </div>
+  
+  <!-- メルカリタブ -->
+  <div id="tab-mercari" style="display:none;">
+    <div class="section">
+      <h2>📌 メルカリタイトル <button class="copy" onclick="copy('mercari-title')">📋</button> <span id="copied-mtitle" class="copied"></span></h2>
+      <div class="result" id="mercari-title"></div>
+    </div>
+    
+    <div class="section">
+      <h2>📝 メルカリ説明文 <button class="copy" onclick="copy('mercari-desc')">📋</button> <span id="copied-mdesc" class="copied"></span></h2>
+      <div class="result" id="mercari-desc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyGZ16k0sCKBGgFLzrZRRPHCbQFNo0YRwlPD-ikwShAyuTb8Cpod2ECJW6AGuMnKIAG/exec';
+const SHIPPING_JPY = 5000;
+const USD_JPY = 150;
+const EBAY_FEE_RATE = 0.135;
+
+let API_KEY = localStorage.getItem('claude_api_key') || '';
+if (!API_KEY) {
+  API_KEY = prompt('Claude APIキーを入力してください（初回のみ）:');
+  if (API_KEY) localStorage.setItem('claude_api_key', API_KEY);
+}
+
+let images = [];
+
+function handleImages(e) {
+  const files = Array.from(e.target.files).slice(0, 5);
+  files.forEach(f => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (images.length < 5) {
+        images.push(ev.target.result);
+        renderImages();
+      }
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderImages() {
+  const div = document.getElementById('image-preview');
+  div.innerHTML = images.map((src, i) => `
+    <div class="image-item">
+      <img src="${src}">
+      <button class="remove" onclick="removeImage(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function removeImage(i) {
+  images.splice(i, 1);
+  renderImages();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-ebay').style.display = name === 'ebay' ? 'block' : 'none';
+  document.getElementById('tab-mercari').style.display = name === 'mercari' ? 'block' : 'none';
+}
+
+async function callClaude(messages) {
+  const url = GAS_URL + '?action=claudeVision' +
+              '&apiKey=' + encodeURIComponent(API_KEY);
+  
+  const res = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ messages: messages })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error.message);
+  return data.content[0].text;
+}
+
+async function generate() {
+  if (images.length === 0) {
+    alert('画像を1枚以上アップロードしてください');
+    return;
+  }
+  
+  const condition = document.getElementById('condition').value;
+  const notes = document.getElementById('notes').value.trim();
+  const sku = document.getElementById('sku').value.trim();
+  const cost = parseInt(document.getElementById('cost').value) || 0;
+  
+  if (!sku) { alert('SKUを入力してください'); return; }
+  if (!cost) { alert('仕入れ価格を入力してください'); return; }
+  
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>生成中（30秒程度）...';
+  
+  try {
+    // 画像を送信用のメッセージ形式に
+    const imageContents = images.map(src => ({
+      type: 'image',
+      source: {
+        type: 'base64',
+        media_type: src.match(/data:(image\/\w+);/)[1],
+        data: src.split(',')[1]
+      }
+    }));
+    
+    const prompt = `あなたはeBayセラーのプロアシスタントです。バッグ・バックパックの出品情報を生成してください。
+
+【商品情報】
+- 状態: ${condition}
+- 補足: ${notes || '特になし'}
+- 仕入れ価格: ¥${cost}
+
+【出力形式】必ずJSON形式で出力。それ以外の文字は不要。
+
+{
+  "brand": "ブランド名（画像から識別）",
+  "model": "モデル名（画像から識別、不明なら空）",
+  "ebay_title": "eBayタイトル80文字以内、Brand+Model+Feature+Condition+Origin形式、英語",
+  "specifics": {
+    "Brand": "",
+    "Type": "Backpack/Duffel/Tote/Crossbody/Shoulder Bag etc",
+    "Style": "",
+    "Color": "",
+    "Material": "Nylon/Leather/Canvas etc",
+    "Size": "Small/Medium/Large",
+    "Capacity": "",
+    "Department": "Men/Women/Unisex Adults",
+    "Features": "Water Resistant/Padded/Adjustable etc",
+    "Country/Region of Manufacture": "Japan/USA/China etc",
+    "Pattern": "Solid/Camo/Striped etc",
+    "Closure": "Zipper/Buckle/Drawstring etc"
+  },
+  "condition_description": "英語、状態の詳細説明、3-5文",
+  "description": "英語、SEO意識した説明文。商品の魅力、特徴、使用シーン、サイズ、状態の順で構成。150-250語",
+  "price_ai_usd": "市場相場から推定する販売価格（USD、数字のみ）",
+  "mercari_title": "メルカリタイトル40文字以内。【】で一番伝えたい要素+ブランド+セールスポイント+カテゴリ+購入したくなるワード",
+  "mercari_brand": "ブランド（日本語可）",
+  "mercari_size": "サイズ表記",
+  "mercari_dimensions": "実寸（cm/インチ）",
+  "mercari_color": "カラー",
+  "mercari_material": "素材"
+}
+
+【重要】画像から正確にブランド・モデルを識別してください。タグ画像があれば最優先で使ってください。`;
+
+    const messages = [{
+      role: 'user',
+      content: [
+        ...imageContents,
+        { type: 'text', text: prompt }
+      ]
+    }];
+    
+    const result = await callClaude(messages);
+    const json = JSON.parse(result.match(/\{[\s\S]*\}/)[0]);
+    
+    displayResult(json, cost);
+  } catch (e) {
+    console.error(e);
+    alert('エラー: ' + e.message);
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '🚀 出品情報を生成';
+}
+
+function displayResult(data, cost) {
+  // 価格計算
+  const priceAI = parseFloat(data.price_ai_usd) || 0;
+  const targetMargin = 1.6; // 仕入×1.6 を最低ラインとして提案
+  const priceCostUSD = Math.round((cost * targetMargin + SHIPPING_JPY) / USD_JPY);
+  
+  document.getElementById('price-ai').textContent = '$' + priceAI;
+  document.getElementById('price-cost').textContent = '$' + priceCostUSD;
+  
+  // AI推定価格での利益計算
+  const revenueJPY = priceAI * USD_JPY;
+  const fee = revenueJPY * EBAY_FEE_RATE;
+  const profit = revenueJPY - cost - SHIPPING_JPY - fee;
+  const margin = ((profit / revenueJPY) * 100).toFixed(1);
+  
+  document.getElementById('profit-info').textContent = 
+    `AI推定価格 $${priceAI} で出品 → 利益 ¥${Math.round(profit).toLocaleString()} (粗利率 ${margin}%)`;
+  
+  // タイトル
+  document.getElementById('ebay-title').textContent = data.ebay_title;
+  
+  // Item Specifics
+  const specs = data.specifics;
+  const specsHtml = Object.entries(specs)
+    .filter(([k, v]) => v && v.trim())
+    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+    .join('');
+  document.getElementById('specifics-table').innerHTML = specsHtml;
+  
+  // Condition / Description
+  document.getElementById('ebay-condition').textContent = data.condition_description;
+  document.getElementById('ebay-desc').textContent = data.description;
+  
+  // メルカリ
+  document.getElementById('mercari-title').textContent = data.mercari_title;
+  
+  const mercariDesc = `We offer immediate purchase approval.
+Our store deals exclusively in authentic products,
+so please feel confident in making your purchase.
+
+■ブランド■
+${data.mercari_brand || ''}
+
+■サイズ表記■
+${data.mercari_size || ''}
+
+■サイズ実寸（cm/インチ）■
+${data.mercari_dimensions || ''}
+
+■カラー■
+${data.mercari_color || ''}
+
+■素材■
+${data.mercari_material || ''}
+
+■状態■
+${document.getElementById('condition').value}
+
+USED
+
+こちらにもオススメ商品を大量出品中です
+#古着屋SAAB
+
+■購入元■
+ブランドリユース店、質屋・古物市場など信頼できる正規品販売店から仕入れた正規品です。
+
+即購入OK！
+当店では全て正規品を取り扱っておりますので、安心してお買い求めください。`;
+  
+  document.getElementById('mercari-desc').textContent = mercariDesc;
+  
+  document.getElementById('result').style.display = 'block';
+}
+
+function copy(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text);
+  showCopied(id);
+}
+
+function copySpecifics() {
+  const rows = document.querySelectorAll('#specifics-table tr');
+  const text = Array.from(rows).map(r => {
+    const tds = r.querySelectorAll('td');
+    return tds[0].textContent + ': ' + tds[1].textContent;
+  }).join('\n');
+  navigator.clipboard.writeText(text);
+  document.getElementById('copied-spec').textContent = '✓';
+  setTimeout(() => document.getElementById('copied-spec').textContent = '', 2000);
+}
+
+function showCopied(id) {
+  const map = {
+    'ebay-title': 'copied-title',
+    'ebay-condition': 'copied-cond',
+    'ebay-desc': 'copied-desc',
+    'mercari-title': 'copied-mtitle',
+    'mercari-desc': 'copied-mdesc'
+  };
+  const span = document.getElementById(map[id]);
+  if (span) {
+    span.textContent = '✓';
+    setTimeout(() => span.textContent = '', 2000);
+  }
+}
+</script>
+
+</body>
+</html>
