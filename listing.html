@@ -190,11 +190,14 @@ button.copy {
         </div>
       </div>
       <div class="profit" id="profit-info">利益計算中...</div>
+      <div style="font-size:11px;color:#6e6e73;margin-top:6px;text-align:center;" id="price-basis"></div>
     </div>
     
     <div class="section">
-      <h2>📌 SEOタイトル <button class="copy" onclick="copy('ebay-title')">📋</button> <span id="copied-title" class="copied"></span></h2>
+      <h2>📌 SEOタイトル <span id="ebay-title-len" style="font-size:11px;color:#6e6e73;font-weight:normal;"></span> <button class="copy" onclick="copy('ebay-title')">📋</button> <span id="copied-title" class="copied"></span></h2>
       <div class="result" id="ebay-title"></div>
+      <div class="label">🇯🇵 日本語版（参考）</div>
+      <div class="result" id="ebay-title-ja" style="font-size:12px;"></div>
     </div>
     
     <div class="section">
@@ -210,6 +213,8 @@ button.copy {
     <div class="section">
       <h2>📝 Description（英語） <button class="copy" onclick="copy('ebay-desc')">📋</button> <span id="copied-desc" class="copied"></span></h2>
       <div class="result" id="ebay-desc"></div>
+      <div class="label">🇯🇵 日本語版（参考）</div>
+      <div class="result" id="ebay-desc-ja" style="font-size:12px;"></div>
     </div>
   </div>
   
@@ -319,36 +324,65 @@ async function generate() {
       }
     }));
     
-    const prompt = `あなたはeBayセラーのプロアシスタントです。バッグ・バックパックの出品情報を生成してください。
+    const prompt = `あなたはeBay SEO対策のスペシャリストでプロのバッグ鑑定家です。商品画像から最大限の情報を抽出し、SEOに最適化された出品情報を生成してください。
 
 【商品情報】
 - 状態: ${condition}
 - 補足: ${notes || '特になし'}
 - 仕入れ価格: ¥${cost}
 
+【eBayタイトル構成（必須・80文字以内・できるだけ80文字に近づける）】
+[Brand] [Product/Series/Model] [Size/Capacity] [Type] [Color] [Keyword] [Condition]
+
+例: Patagonia Black Hole Pack 32L Backpack Black Travel Bag USA Model Excellent
+例: TUMI Alpha Bravo Davis Backpack Black Business Bag USA Model Excellent
+
+【SEOキーワード推奨】
+- 状態: New / Excellent / Used / Tested / Working / Mint
+- 用途: Travel Bag / Business / Casual / Outdoor / Gift / Collector / Daypack / Hiking
+- 地域: USA Model / Japan Exclusive / US Version / JP Model / Made in Japan
+- 特徴: Limited / Lightweight / Water Resistant / Vintage / Rare / Discontinued / Authentic
+
 【出力形式】必ずJSON形式で出力。それ以外の文字は不要。
 
 {
-  "brand": "ブランド名（画像から識別）",
-  "model": "モデル名（画像から識別、不明なら空）",
-  "ebay_title": "eBayタイトル80文字以内、Brand+Model+Feature+Condition+Origin形式、英語",
+  "brand": "ブランド名（画像から正確に識別）",
+  "model": "モデル名／シリーズ名（画像から識別、不明なら空）",
+  "ebay_title_en": "eBayタイトル英語80文字以内（できるだけ80文字に近く）",
+  "ebay_title_ja": "eBayタイトル日本語版（参考用）",
   "specifics": {
     "Brand": "",
-    "Type": "Backpack/Duffel/Tote/Crossbody/Shoulder Bag etc",
-    "Style": "",
-    "Color": "",
-    "Material": "Nylon/Leather/Canvas etc",
-    "Size": "Small/Medium/Large",
-    "Capacity": "",
+    "Model": "",
+    "Type": "Backpack/Duffel Bag/Tote Bag/Crossbody Bag/Shoulder Bag/Messenger Bag/Hiking Pack",
+    "Style": "Casual/Business/Outdoor/Travel/Vintage etc",
+    "Color": "正確な色名",
+    "Material": "Nylon/Leather/Canvas/Polyester/Cordura etc",
+    "Exterior Material": "",
+    "Lining Material": "",
+    "Size": "Small/Medium/Large/Extra Large",
+    "Capacity": "Liter数",
     "Department": "Men/Women/Unisex Adults",
-    "Features": "Water Resistant/Padded/Adjustable etc",
-    "Country/Region of Manufacture": "Japan/USA/China etc",
-    "Pattern": "Solid/Camo/Striped etc",
-    "Closure": "Zipper/Buckle/Drawstring etc"
+    "Features": "Water Resistant/Padded Straps/Laptop Compartment/Adjustable Straps etc",
+    "Country/Region of Manufacture": "Japan/USA/Vietnam/China etc",
+    "Pattern": "Solid/Camouflage/Striped/Floral etc",
+    "Closure": "Zipper/Buckle/Drawstring/Magnetic Snap etc",
+    "Number of Compartments": "",
+    "Strap Type": "Adjustable Shoulder Strap/Two Handles etc",
+    "Theme": "Outdoor/Urban/Travel/Sport etc",
+    "Vintage": "Yes/No",
+    "Year Manufactured": "",
+    "Character": "",
+    "MPN": "",
+    "Item Width": "",
+    "Item Height": "",
+    "Item Depth": "",
+    "Item Weight": ""
   },
-  "condition_description": "英語、状態の詳細説明、3-5文",
-  "description": "英語、SEO意識した説明文。商品の魅力、特徴、使用シーン、サイズ、状態の順で構成。150-250語",
+  "condition_description": "英語、状態の詳細説明、画像から判断できる傷・汚れ・特徴を具体的に記載",
+  "description_en": "英語の説明文。以下の構成で200-350語：1)商品概要 2)特徴・スペック 3)使用シーン 4)サイズ詳細 5)状態 6)■Source of Purchase（購入元）：We source authentic items from trusted Japanese reuse stores, pawn shops, antique markets, and authorized retailers. All items are guaranteed 100% authentic. 7)■Eco-Friendly Commitment（環境配慮）：By giving pre-owned items a second life, we contribute to reducing waste and promoting sustainable consumption.",
+  "description_ja": "日本語の説明文。同じ構成で日本語版",
   "price_ai_usd": "市場相場から推定する販売価格（USD、数字のみ）",
+  "price_estimation_basis": "推定根拠（短く）",
   "mercari_title": "メルカリタイトル40文字以内。【】で一番伝えたい要素+ブランド+セールスポイント+カテゴリ+購入したくなるワード",
   "mercari_brand": "ブランド（日本語可）",
   "mercari_size": "サイズ表記",
@@ -357,7 +391,11 @@ async function generate() {
   "mercari_material": "素材"
 }
 
-【重要】画像から正確にブランド・モデルを識別してください。タグ画像があれば最優先で使ってください。`;
+【重要事項】
+1. 画像から正確にブランド・モデルを識別。タグ画像があれば最優先
+2. タイトルは80文字に近づけてSEO最大化
+3. Item Specificsは画像から判断できる範囲で出来るだけ多く埋める。不明な項目は空文字
+4. シューズの場合はサイズに US/UK/EU/cm を併記`;
 
     const messages = [{
       role: 'user',
@@ -399,19 +437,27 @@ function displayResult(data, cost) {
     `AI推定価格 $${priceAI} で出品 → 利益 ¥${Math.round(profit).toLocaleString()} (粗利率 ${margin}%)`;
   
   // タイトル
-  document.getElementById('ebay-title').textContent = data.ebay_title;
+  document.getElementById('ebay-title').textContent = data.ebay_title_en || data.ebay_title || '';
+  document.getElementById('ebay-title-ja').textContent = data.ebay_title_ja || '';
+  document.getElementById('ebay-title-len').textContent = '(' + (data.ebay_title_en || '').length + '文字)';
   
   // Item Specifics
   const specs = data.specifics;
   const specsHtml = Object.entries(specs)
-    .filter(([k, v]) => v && v.trim())
+    .filter(([k, v]) => v && v.toString().trim())
     .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
     .join('');
   document.getElementById('specifics-table').innerHTML = specsHtml;
   
   // Condition / Description
   document.getElementById('ebay-condition').textContent = data.condition_description;
-  document.getElementById('ebay-desc').textContent = data.description;
+  document.getElementById('ebay-desc').textContent = data.description_en || data.description || '';
+  document.getElementById('ebay-desc-ja').textContent = data.description_ja || '';
+  
+  // 価格根拠
+  if (data.price_estimation_basis) {
+    document.getElementById('price-basis').textContent = data.price_estimation_basis;
+  }
   
   // メルカリ
   document.getElementById('mercari-title').textContent = data.mercari_title;
