@@ -331,17 +331,33 @@ async function generate() {
 - 補足: ${notes || '特になし'}
 - 仕入れ価格: ¥${cost}
 
-【eBayタイトル構成（必須・80文字以内・できるだけ80文字に近づける）】
-[Brand] [Product/Series/Model] [Size/Capacity] [Type] [Color] [Keyword] [Condition]
+【eBayタイトル構成（勝利の方程式・必須・80文字以内・できるだけ80文字に近づける）】
+[Brand] [Model/Product Name] [Size/Capacity] [Type] [Feature/Color] [Rarity] [Condition] [Country of Manufacture]
 
-例: Patagonia Black Hole Pack 32L Backpack Black Travel Bag USA Model Excellent
-例: TUMI Alpha Bravo Davis Backpack Black Business Bag USA Model Excellent
+【良い例】
+- Mystery Ranch 3 Day Assault Backpack Coyote Tactical Military Rare Excellent Made in USA
+- Patagonia Black Hole Duffel 60L Blue Discontinued Model Excellent Condition
+- TUMI Alpha Bravo Davis Backpack Black Business Bag USA Model Excellent
+- Patagonia Black Hole Pack 32L Backpack Black Travel Bag USA Model Excellent
+
+【避けるべき例】
+- Mystery Ranch Backpack Used ←情報少なすぎ
+- Patagonia Bag ←短すぎ
 
 【SEOキーワード推奨】
-- 状態: New / Excellent / Used / Tested / Working / Mint
-- 用途: Travel Bag / Business / Casual / Outdoor / Gift / Collector / Daypack / Hiking
-- 地域: USA Model / Japan Exclusive / US Version / JP Model / Made in Japan
-- 特徴: Limited / Lightweight / Water Resistant / Vintage / Rare / Discontinued / Authentic
+- 状態: New / Excellent / Mint / Used / Tested / Working / Like New
+- 希少性: Rare / Discontinued / Limited / Vintage / Hard to Find / Exclusive / Sold Out
+- 特徴: Tactical / Military / Outdoor / Travel / Business / Casual / Lightweight / Water Resistant
+- 製造国: Made in USA / Made in Japan / Made in Vietnam / Made in Italy
+- 用途: Travel Bag / Daypack / Hiking / Commuter / Collector
+
+【絶対ルール】
+1. ブランド名は必ず最初に
+2. モデル名・シリーズ名を入れる（重要なSEO要素）
+3. サイズ・容量を入れる
+4. 希少性キーワード（Rare/Discontinued等）を可能なら含める
+5. 状態と製造国も入れる
+6. 80文字に出来るだけ近づける（情報量最大化）
 
 【出力形式】必ずJSON形式で出力。それ以外の文字は不要。
 
