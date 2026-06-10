@@ -22,7 +22,9 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 .price-display { background: #f8f9ff; border: 2px solid #e8e8e8; border-radius: 12px; padding: 14px 16px; }
 .price-display .value { font-size: 20px; font-weight: 700; color: #4f46e5; }
 .price-display .unit { font-size: 12px; color: #999; margin-top: 2px; }
-.assignee-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+.assignee-auto { margin-top: 8px; }
+.assignee-auto .assignee-btn { width: 100%; }
+.assignee-workers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
 .assignee-btn { padding: 14px 6px; border: 2px solid #e8e8e8; border-radius: 12px; background: white; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; -webkit-appearance: none; }
 .assignee-btn.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(79,70,229,0.3); }
 .sheet-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
@@ -57,12 +59,16 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 </div>
 <div class="card">
   <label>担当外注</label>
-  <div class="assignee-buttons">
+  <div class="assignee-auto">
     <button class="assignee-btn active" id="btn-auto" onclick="selectAssignee('auto')">自動</button>
+  </div>
+  <div class="assignee-workers">
     <button class="assignee-btn" id="btn-mile" onclick="selectAssignee('ミレ')">ミレ</button>
     <button class="assignee-btn" id="btn-mai" onclick="selectAssignee('マイ')">マイ</button>
     <button class="assignee-btn" id="btn-an" onclick="selectAssignee('アン')">アン</button>
+    <button class="assignee-btn" id="btn-an2" onclick="selectAssignee('アン②')">アン②</button>
     <button class="assignee-btn" id="btn-rin" onclick="selectAssignee('リン')">リン</button>
+    <button class="assignee-btn" id="btn-rin2" onclick="selectAssignee('リン②')">リン②</button>
   </div>
 </div>
 <div class="card">
@@ -80,13 +86,15 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 <iframe id="gas-frame" style="display:none;" width="1" height="1"></iframe>
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxci76rSV3KA3eG0eWPZyKZN90lOjp3Mf1WGupKwGvUzSCIfVnYbBMxj1B0SeMDuAcY/exec';
-const ASSIGNEES = ['ミレ', 'マイ', 'アン', 'リン'];
+const ASSIGNEES = ['ミレ', 'マイ', 'アン', 'アン②', 'リン', 'リン②'];
 const EC_CODES = {'amazon':1,'mercari':2,'yahoo_fril':3,'yahoo_shop':4,'rakuten':5,'mercari_shops':6,'rakuma':7,'yahoo':8,'netmall':9,'suruga':10,'pokemon':11,'disney':12,'geo':13,'digimart':14,'trefac_general':15,'2ndstreet':16,'mandarake':17,'kojima':18,'eearphone':19,'sorano':20,'trefac':21,'kindal':22,'kaitori':23,'bape':24,'ragtag':25,'kosho':26,'offmall':27,'other':2};
 const SHEETS = {
   'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY'},
   'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4'},
   'アン': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g'},
-  'リン': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM'}
+  'アン②': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g', gid:'1621299920'},
+  'リン': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM', gid:'1621299920'},
+  'リン②': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM', gid:'1861418428'}
 };
 let currentAssigneeIndex = parseInt(localStorage.getItem('assigneeIndex') || '0');
 let selectedAssignee = 'auto';
@@ -94,16 +102,9 @@ let detectedSite = 'other';
 
 function selectAssignee(name) {
   selectedAssignee = name;
-  document.getElementById('btn-auto').classList.remove('active');
-  document.getElementById('btn-mile').classList.remove('active');
-  document.getElementById('btn-mai').classList.remove('active');
-  document.getElementById('btn-an').classList.remove('active');
-  document.getElementById('btn-rin').classList.remove('active');
-  if (name === 'auto') document.getElementById('btn-auto').classList.add('active');
-  else if (name === 'ミレ') document.getElementById('btn-mile').classList.add('active');
-  else if (name === 'マイ') document.getElementById('btn-mai').classList.add('active');
-  else if (name === 'アン') document.getElementById('btn-an').classList.add('active');
-  else if (name === 'リン') document.getElementById('btn-rin').classList.add('active');
+  ['btn-auto','btn-mile','btn-mai','btn-an','btn-an2','btn-rin','btn-rin2'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = {'auto':'btn-auto','ミレ':'btn-mile','マイ':'btn-mai','アン':'btn-an','アン②':'btn-an2','リン':'btn-rin','リン②':'btn-rin2'};
+  if (map[name]) document.getElementById(map[name]).classList.add('active');
 }
 
 function detectSite() {
@@ -183,6 +184,7 @@ function submitForm() {
   const sellUsd = parseFloat(document.getElementById('sell-usd').textContent.replace('$','')) || 0;
   const params = new URLSearchParams({
     spreadsheetId: sheet.id,
+    ...(sheet.gid && {gid: sheet.gid}),
     url: url,
     ecCode: ecCode,
     price: parseInt(price),
