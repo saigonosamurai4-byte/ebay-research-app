@@ -66,17 +66,16 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
     <button class="assignee-btn" id="btn-mile" onclick="selectAssignee('ミレ')">ミレ</button>
     <button class="assignee-btn" id="btn-mai" onclick="selectAssignee('マイ')">マイ</button>
     <button class="assignee-btn" id="btn-an" onclick="selectAssignee('アン')">アン</button>
-    <button class="assignee-btn" id="btn-an2" onclick="selectAssignee('アン②')">アン②</button>
     <button class="assignee-btn" id="btn-rin" onclick="selectAssignee('リン')">リン</button>
-    <button class="assignee-btn" id="btn-rin2" onclick="selectAssignee('リン②')">リン②</button>
+    <button class="assignee-btn" id="btn-sub" onclick="selectAssignee('サブ垢')">サブ垢</button>
   </div>
 </div>
 <div class="card">
   <label>シートを開く</label>
   <div class="sheet-links">
-    <a href="https://docs.google.com/spreadsheets/d/1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 リン①</a>
-    <a href="https://docs.google.com/spreadsheets/d/1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM/edit?gid=1861418428#gid=1861418428" target="_blank" class="sheet-link-btn">📊 リン②</a>
-    <a href="https://docs.google.com/spreadsheets/d/103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 アン③</a>
+    <a href="https://docs.google.com/spreadsheets/d/1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 リン</a>
+    <a href="https://docs.google.com/spreadsheets/d/103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 アン</a>
+    <a href="https://docs.google.com/spreadsheets/d/15goWgTIHt5O5P0b5yDlaG53KUlUnuijRbHdAz9s0D1E/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 サブ垢</a>
   </div>
 </div>
 <button class="btn-submit" id="submit-btn" onclick="submitForm()">スプレッドシートに入力する</button>
@@ -86,15 +85,14 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 <iframe id="gas-frame" style="display:none;" width="1" height="1"></iframe>
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxci76rSV3KA3eG0eWPZyKZN90lOjp3Mf1WGupKwGvUzSCIfVnYbBMxj1B0SeMDuAcY/exec';
-const ASSIGNEES = ['ミレ', 'マイ', 'アン', 'アン②', 'リン', 'リン②'];
+const ASSIGNEES = ['ミレ', 'マイ', 'アン', 'リン', 'サブ垢'];
 const EC_CODES = {'amazon':1,'mercari':2,'yahoo_fril':3,'yahoo_shop':4,'rakuten':5,'mercari_shops':6,'rakuma':7,'yahoo':8,'netmall':9,'suruga':10,'pokemon':11,'disney':12,'geo':13,'digimart':14,'trefac_general':15,'2ndstreet':16,'mandarake':17,'kojima':18,'eearphone':19,'sorano':20,'trefac':21,'kindal':22,'kaitori':23,'bape':24,'ragtag':25,'kosho':26,'offmall':27,'other':2};
 const SHEETS = {
   'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY', sheetName:'ミレ様出品シート① '},
   'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4', sheetName:'マイ様出品シート① '},
   'アン': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g', sheetName:'Anh様出品シート①'},
-  'アン②': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g', sheetName:'Anh様出品シート②'},
   'リン': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM', sheetName:'リン様出品シート①'},
-  'リン②': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM', sheetName:'リン様出品シート②'}
+  'サブ垢': {id:'15goWgTIHt5O5P0b5yDlaG53KUlUnuijRbHdAz9s0D1E', sheetName:'サブ垢出品シート①'}
 };
 let currentAssigneeIndex = parseInt(localStorage.getItem('assigneeIndex') || '0');
 let selectedAssignee = 'auto';
@@ -102,8 +100,8 @@ let detectedSite = 'other';
 
 function selectAssignee(name) {
   selectedAssignee = name;
-  ['btn-auto','btn-mile','btn-mai','btn-an','btn-an2','btn-rin','btn-rin2'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const map = {'auto':'btn-auto','ミレ':'btn-mile','マイ':'btn-mai','アン':'btn-an','アン②':'btn-an2','リン':'btn-rin','リン②':'btn-rin2'};
+  ['btn-auto','btn-mile','btn-mai','btn-an','btn-rin','btn-sub'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = {'auto':'btn-auto','ミレ':'btn-mile','マイ':'btn-mai','アン':'btn-an','リン':'btn-rin','サブ垢':'btn-sub'};
   if (map[name]) document.getElementById(map[name]).classList.add('active');
 }
 
