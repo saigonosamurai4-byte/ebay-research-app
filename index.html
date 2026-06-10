@@ -22,9 +22,11 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 .price-display { background: #f8f9ff; border: 2px solid #e8e8e8; border-radius: 12px; padding: 14px 16px; }
 .price-display .value { font-size: 20px; font-weight: 700; color: #4f46e5; }
 .price-display .unit { font-size: 12px; color: #999; margin-top: 2px; }
-.assignee-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
-.assignee-btn { padding: 14px 8px; border: 2px solid #e8e8e8; border-radius: 12px; background: white; font-size: 14px; font-weight: 600; color: #666; cursor: pointer; -webkit-appearance: none; }
+.assignee-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+.assignee-btn { padding: 14px 6px; border: 2px solid #e8e8e8; border-radius: 12px; background: white; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; -webkit-appearance: none; }
 .assignee-btn.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(79,70,229,0.3); }
+.sheet-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+.sheet-link-btn { display: block; padding: 12px 8px; border: 2px solid #e0e0ff; border-radius: 12px; background: #f8f9ff; font-size: 13px; font-weight: 600; color: #4f46e5; text-align: center; text-decoration: none; }
 .btn-submit { width: 100%; padding: 18px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 15px rgba(79,70,229,0.4); }
 .btn-submit:disabled { opacity: 0.6; }
 .success-msg { display: none; background: #f0fff4; border: 2px solid #27ae60; border-radius: 12px; padding: 16px; text-align: center; color: #27ae60; font-weight: 600; margin-top: 12px; }
@@ -60,6 +62,15 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
     <button class="assignee-btn" id="btn-mile" onclick="selectAssignee('ミレ')">ミレ</button>
     <button class="assignee-btn" id="btn-mai" onclick="selectAssignee('マイ')">マイ</button>
     <button class="assignee-btn" id="btn-an" onclick="selectAssignee('アン')">アン</button>
+    <button class="assignee-btn" id="btn-rin" onclick="selectAssignee('リン')">リン</button>
+  </div>
+</div>
+<div class="card">
+  <label>シートを開く</label>
+  <div class="sheet-links">
+    <a href="https://docs.google.com/spreadsheets/d/1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 リン①</a>
+    <a href="https://docs.google.com/spreadsheets/d/1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM/edit?gid=1861418428#gid=1861418428" target="_blank" class="sheet-link-btn">📊 リン②</a>
+    <a href="https://docs.google.com/spreadsheets/d/103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g/edit?gid=1621299920#gid=1621299920" target="_blank" class="sheet-link-btn">📊 アン③</a>
   </div>
 </div>
 <button class="btn-submit" id="submit-btn" onclick="submitForm()">スプレッドシートに入力する</button>
@@ -69,12 +80,13 @@ input:focus { outline: none; border-color: #4f46e5; background: white; }
 <iframe id="gas-frame" style="display:none;" width="1" height="1"></iframe>
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxci76rSV3KA3eG0eWPZyKZN90lOjp3Mf1WGupKwGvUzSCIfVnYbBMxj1B0SeMDuAcY/exec';
-const ASSIGNEES = ['ミレ', 'マイ', 'アン'];
+const ASSIGNEES = ['ミレ', 'マイ', 'アン', 'リン'];
 const EC_CODES = {'amazon':1,'mercari':2,'yahoo_fril':3,'yahoo_shop':4,'rakuten':5,'mercari_shops':6,'rakuma':7,'yahoo':8,'netmall':9,'suruga':10,'pokemon':11,'disney':12,'geo':13,'digimart':14,'trefac_general':15,'2ndstreet':16,'mandarake':17,'kojima':18,'eearphone':19,'sorano':20,'trefac':21,'kindal':22,'kaitori':23,'bape':24,'ragtag':25,'kosho':26,'offmall':27,'other':2};
 const SHEETS = {
   'ミレ': {id:'1mDeTde1hwBFDkVbKtzMs23AIDBktc_1nQwa8HP_eiyY'},
   'マイ': {id:'1qlhoQ7JSg8M9HvMuav3okNsEOTgHMeyXVyJaBQWtiF4'},
-  'アン': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g'}
+  'アン': {id:'103190DNb273QFRTObA84zBztOXFVOF0zh9jyx1794_g'},
+  'リン': {id:'1zLqQ0ID-di1wBTaBwWP-XgdUWFM2d-wZUwV7P2oP9kM'}
 };
 let currentAssigneeIndex = parseInt(localStorage.getItem('assigneeIndex') || '0');
 let selectedAssignee = 'auto';
@@ -86,10 +98,12 @@ function selectAssignee(name) {
   document.getElementById('btn-mile').classList.remove('active');
   document.getElementById('btn-mai').classList.remove('active');
   document.getElementById('btn-an').classList.remove('active');
+  document.getElementById('btn-rin').classList.remove('active');
   if (name === 'auto') document.getElementById('btn-auto').classList.add('active');
   else if (name === 'ミレ') document.getElementById('btn-mile').classList.add('active');
   else if (name === 'マイ') document.getElementById('btn-mai').classList.add('active');
   else if (name === 'アン') document.getElementById('btn-an').classList.add('active');
+  else if (name === 'リン') document.getElementById('btn-rin').classList.add('active');
 }
 
 function detectSite() {
